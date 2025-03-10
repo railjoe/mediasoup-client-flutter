@@ -1340,11 +1340,11 @@ class OfferMediaSection extends MediaSection {
           _mediaObject.ssrcGroups = [];
 
           if (offerRtpParameters.rtcp?.cname != null &&
-              offerRtpParameters.rtcp!.cname.isNotEmpty) {
+              offerRtpParameters.rtcp!.cname?.isNotEmpty == true) {
             _mediaObject.ssrcs!.add(Ssrc(
               id: ssrc,
               attribute: 'cname',
-              value: offerRtpParameters.rtcp!.cname,
+              value: offerRtpParameters.rtcp!.cname ?? "",
             ));
           }
 
@@ -1358,11 +1358,11 @@ class OfferMediaSection extends MediaSection {
 
           if (rtxSsrc != null) {
             if (offerRtpParameters.rtcp?.cname != null &&
-                offerRtpParameters.rtcp!.cname.isNotEmpty) {
+                offerRtpParameters.rtcp!.cname?.isNotEmpty == true) {
               _mediaObject.ssrcs!.add(Ssrc(
                 id: rtxSsrc,
                 attribute: 'cname',
-                value: offerRtpParameters.rtcp!.cname,
+                value: offerRtpParameters.rtcp!.cname ?? "",
               ));
             }
 
@@ -1428,7 +1428,7 @@ class OfferMediaSection extends MediaSection {
       _mediaObject.ssrcs!.add(Ssrc(
         id: ssrc,
         attribute: 'cname',
-        value: offerRtpParameters.rtcp!.cname,
+        value: offerRtpParameters.rtcp!.cname ?? "",
       ));
     }
 
@@ -1440,11 +1440,11 @@ class OfferMediaSection extends MediaSection {
 
     if (rtxSsrc != null) {
       if (offerRtpParameters.rtcp?.cname != null &&
-          offerRtpParameters.rtcp!.cname.isNotEmpty) {
+          offerRtpParameters.rtcp!.cname?.isNotEmpty == true) {
         _mediaObject.ssrcs!.add(Ssrc(
           id: rtxSsrc,
           attribute: 'cname',
-          value: offerRtpParameters.rtcp!.cname,
+          value: offerRtpParameters.rtcp!.cname ?? "",
         ));
       }
 
