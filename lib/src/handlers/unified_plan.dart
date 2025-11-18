@@ -347,32 +347,61 @@ class UnifiedPlan extends HandlerInterface {
   Future<void> restartIce(IceParameters iceParameters) async {
     _logger.debug('restartIce()');
 
+    // Log the ICE parameters being applied
+    print('🔧 restartIce() - direction: $_direction');
+    print('🔧 New ICE params - ufrag: ${iceParameters.usernameFragment}, pwd: ${iceParameters.password}');
+
     // Provide the remote SDP handler with new remote Ice parameters.
     _remoteSdp.updateIceParameters(iceParameters);
 
     if (!_transportReady) {
+      print('🔧 Transport not ready, returning');
       return null;
     }
 
     if (_direction == Direction.send) {
+      // Call restartIce() on peer connection before createOffer
+      // This is required to generate new ICE credentials
+      print('🔧 Calling _pc.restartIce() before createOffer...');
+      await _pc!.restartIce();
+
       RTCSessionDescription offer =
           await _pc!.createOffer({'iceRestart': true});
 
       _logger.debug(
           'restartIce() | calling pc.setLocalDescription() [offer:${offer.toMap()}]');
 
+      // Log local offer ICE credentials
+      final offerSdp = offer.sdp ?? '';
+      final localUfragMatch = RegExp(r'a=ice-ufrag:(\S+)').firstMatch(offerSdp);
+      final localPwdMatch = RegExp(r'a=ice-pwd:(\S+)').firstMatch(offerSdp);
+      print('🔧 Local offer - ufrag: ${localUfragMatch?.group(1)}, pwd: ${localPwdMatch?.group(1)}');
+
       await _pc!.setLocalDescription(offer);
 
       RTCSessionDescription answer =
           RTCSessionDescription(_remoteSdp.getSdp(), 'answer');
 
+      // Log remote answer ICE credentials
+      final answerSdp = answer.sdp ?? '';
+      final remoteUfragMatch = RegExp(r'a=ice-ufrag:(\S+)').firstMatch(answerSdp);
+      final remotePwdMatch = RegExp(r'a=ice-pwd:(\S+)').firstMatch(answerSdp);
+      print('🔧 Remote answer - ufrag: ${remoteUfragMatch?.group(1)}, pwd: ${remotePwdMatch?.group(1)}');
+
       _logger.debug(
           'restartIce() | calling pc.setRemoteDescription() [answer:${answer.toMap()}]');
 
       await _pc!.setRemoteDescription(answer);
+      print('🔧 setRemoteDescription completed for send transport');
     } else {
       RTCSessionDescription offer =
           RTCSessionDescription(_remoteSdp.getSdp(), 'offer');
+
+      // Log remote offer ICE credentials
+      final offerSdp = offer.sdp ?? '';
+      final remoteUfragMatch = RegExp(r'a=ice-ufrag:(\S+)').firstMatch(offerSdp);
+      final remotePwdMatch = RegExp(r'a=ice-pwd:(\S+)').firstMatch(offerSdp);
+      print('🔧 Remote offer - ufrag: ${remoteUfragMatch?.group(1)}, pwd: ${remotePwdMatch?.group(1)}');
 
       _logger.debug(
           'restartIce() | calling pc.setRemoteDescription() [offer:${offer.toMap()}]');
@@ -381,10 +410,17 @@ class UnifiedPlan extends HandlerInterface {
 
       RTCSessionDescription answer = await _pc!.createAnswer({});
 
+      // Log local answer ICE credentials
+      final answerSdp = answer.sdp ?? '';
+      final localUfragMatch = RegExp(r'a=ice-ufrag:(\S+)').firstMatch(answerSdp);
+      final localPwdMatch = RegExp(r'a=ice-pwd:(\S+)').firstMatch(answerSdp);
+      print('🔧 Local answer - ufrag: ${localUfragMatch?.group(1)}, pwd: ${localPwdMatch?.group(1)}');
+
       _logger.debug(
           'restartIce() | calling pc.setLocalDescription() [answer:${answer.toMap()}]');
 
       await _pc!.setLocalDescription(answer);
+      print('🔧 setLocalDescription completed for recv transport');
     }
   }
 
