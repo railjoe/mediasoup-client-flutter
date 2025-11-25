@@ -255,6 +255,10 @@ class Device {
     Function? dataProducerCallback,
     List<RTCIceServer> iceServers = const <RTCIceServer>[],
   }) {
+    // BUILD VERIFICATION LOG
+    print('🔥 BUILD VERIFICATION: createSendTransportFromMap called with ${iceServers.length} ICE servers');
+    _logger.debug('🔥 createSendTransportFromMap - ICE servers: ${iceServers.length}');
+
     return createSendTransport(
       id: data['id'],
       iceParameters: IceParameters.fromMap(data['iceParameters']),
@@ -325,6 +329,10 @@ class Device {
     Function? dataConsumerCallback,
     List<RTCIceServer> iceServers = const <RTCIceServer>[],
   }) {
+    // BUILD VERIFICATION LOG
+    print('🔥 BUILD VERIFICATION: createRecvTransportFromMap called with ${iceServers.length} ICE servers');
+    _logger.debug('🔥 createRecvTransportFromMap - ICE servers: ${iceServers.length}');
+
     return createRecvTransport(
       id: data['id'],
       iceParameters: IceParameters.fromMap(data['iceParameters']),
