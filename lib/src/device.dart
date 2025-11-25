@@ -253,6 +253,7 @@ class Device {
     Map data, {
     Function? producerCallback,
     Function? dataProducerCallback,
+    List<RTCIceServer> iceServers = const <RTCIceServer>[],
   }) {
     return createSendTransport(
       id: data['id'],
@@ -264,7 +265,7 @@ class Device {
       sctpParameters: data['sctpParameters'] != null
           ? SctpParameters.fromMap(data['sctpParameters'])
           : null,
-      iceServers: [],
+      iceServers: iceServers,
       appData: data['appData'] ?? <String, dynamic>{},
       proprietaryConstraints: Map<String, dynamic>.from({
         'optional': [
@@ -322,6 +323,7 @@ class Device {
     Map data, {
     Function? consumerCallback,
     Function? dataConsumerCallback,
+    List<RTCIceServer> iceServers = const <RTCIceServer>[],
   }) {
     return createRecvTransport(
       id: data['id'],
@@ -333,7 +335,7 @@ class Device {
       sctpParameters: data['sctpParameters'] != null
           ? SctpParameters.fromMap(data['sctpParameters'])
           : null,
-      iceServers: [],
+      iceServers: iceServers,
       appData: data['appData'] ?? {},
       proprietaryConstraints: Map<String, dynamic>.from({
         'optional': [
